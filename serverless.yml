@@ -1,0 +1,58 @@
+service: sls-starter-api
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  apiGateway:
+    shouldStartNameWithService: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+  stage: ${opt:stage, 'dev'}
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      migrate: true
+    stages:
+      - ${self:provider.stage}
+
+functions:
+  version:
+    handler: handler.version
+    events:
+      - http:
+          path: version/
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    NewsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: table-${self:provider.stage}
+        KeySchema:
+          - AttributeName: type
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: type
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
