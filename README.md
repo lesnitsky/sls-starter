@@ -11,7 +11,7 @@ Template project for serverless APIs with typescript and dynamodb
 ```sh
 git clone git@github.com:lesnitsky/sls-starter.git
 yarn
-yarn dynamo:install
+yarn dynamo:install # this may take a while
 ```
 
 Modify table name according to your project needs in `.env.development`, `.env.production` and `serverless.yml`
