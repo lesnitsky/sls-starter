@@ -5,7 +5,7 @@ module.exports = {
   entry: "./handler.ts",
   target: "node",
   externals: [nodeExternals()],
-  mode: process.env.NODE_ENV,
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
   module: {
     rules: [
       {
